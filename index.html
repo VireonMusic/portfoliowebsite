@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIREON | Music for Games</title>
+  <style>
+    :root {
+      --pink: #f48fb1;
+      --blue: #8fd3f4;
+      --purple: #b8a4ee;
+      --ink: #172033;
+      --muted: #667085;
+      --line: #e7e9f0;
+      --white: #fff;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 15%, rgba(244,143,177,.22), transparent 28%),
+        radial-gradient(circle at 90% 20%, rgba(143,211,244,.25), transparent 30%),
+        linear-gradient(120deg, #fff 0%, #fff9fc 48%, #f8fcff 100%);
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(1100px, calc(100% - 40px)); margin: auto; }
+
+    /* Simple background shapes */
+    .shape {
+      position: absolute;
+      pointer-events: none;
+      opacity: .55;
+    }
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 90px solid transparent;
+      border-right: 90px solid transparent;
+      border-bottom: 155px solid rgba(244,143,177,.30);
+      transform: rotate(22deg);
+    }
+    .circle {
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(244,143,177,.35), rgba(184,164,238,.22));
+    }
+    .diamond {
+      width: 180px;
+      height: 180px;
+      transform: rotate(45deg);
+      background: rgba(143,211,244,.28);
+    }
+
+    header {
+      min-height: 700px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(231,233,240,.9);
+    }
+
+    nav {
+      position: relative;
+      z-index: 5;
+      border-bottom: 1px solid rgba(231,233,240,.8);
+      background: rgba(255,255,255,.58);
+      backdrop-filter: blur(14px);
+    }
+    nav .wrap {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: 7px;
+    }
+    nav a:not(.logo) {
+      margin-left: 28px;
+      font-size: 14px;
+      font-weight: 650;
+      color: #4f5667;
+    }
+    nav a:hover { color: #e96898; }
+
+    .hero {
+      min-height: 625px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-content { max-width: 670px; }
+    .eyebrow {
+      margin: 0 0 12px;
+      color: #e86e9c;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(68px, 12vw, 132px);
+      line-height: .88;
+      letter-spacing: -7px;
+    }
+    .gradient-text {
+      background: linear-gradient(90deg, #ec78a5, #8d79e8, #54aee0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p {
+      max-width: 600px;
+      margin: 30px 0;
+      color: #50586a;
+      font-size: 18px;
+      line-height: 1.75;
+    }
+    .buttons { display: flex; gap: 14px; flex-wrap: wrap; }
+    .button {
+      display: inline-block;
+      padding: 13px 22px;
+      border-radius: 8px;
+      font-weight: 750;
+      font-size: 14px;
+      border: 1px solid #9c8eeb;
+      color: #6571df;
+      background: rgba(255,255,255,.65);
+    }
+    .button.primary {
+      border-color: transparent;
+      color: white;
+      background: linear-gradient(100deg, #f07ca7, #b68ce9);
+      box-shadow: 0 10px 25px rgba(223,117,164,.2);
+    }
+
+    .dots {
+      width: 100px;
+      height: 100px;
+      background-image: radial-gradient(#ef8bb0 2px, transparent 2px);
+      background-size: 16px 16px;
+    }
+
+    section { padding: 85px 0; position: relative; }
+    .section-title { margin-bottom: 28px; }
+    h2 { font-size: 31px; margin: 0 0 7px; }
+    .sub { color: var(--muted); margin: 0; }
+
+    .tracks { display: grid; gap: 13px; }
+    .track {
+      display: grid;
+      grid-template-columns: 64px minmax(150px, 1fr) minmax(190px, .8fr) minmax(250px, 1.4fr);
+      gap: 20px;
+      align-items: center;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,.76);
+      box-shadow: 0 7px 25px rgba(41,49,76,.045);
+    }
+    .cover {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #f7a2bf, #a8dff5);
+    }
+    .track h3 { margin: 0 0 2px; font-size: 16px; }
+    .meta { color: #ec739f; font-size: 13px; }
+    .desc { color: #626b7c; font-size: 13px; }
+    audio { width: 100%; height: 40px; }
+
+    .empty {
+      padding: 30px;
+      border: 1px dashed #ccd1df;
+      border-radius: 12px;
+      color: #737b8d;
+      text-align: center;
+      background: rgba(255,255,255,.55);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--line);
+    }
+    .info {
+      background: rgba(255,255,255,.78);
+      padding: 32px;
+      min-height: 230px;
+    }
+    .icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, #ffd0df, #d5f1fc);
+      font-size: 19px;
+    }
+    .info h3 { margin: 0 0 10px; }
+    .info p, .info li { color: #626b7c; font-size: 14px; }
+    .info ul { padding-left: 18px; }
+
+    .contact-box {
+      position: relative;
+      overflow: hidden;
+      padding: 55px;
+      border-radius: 16px;
+      background: linear-gradient(110deg, rgba(244,143,177,.75), rgba(184,164,238,.72), rgba(143,211,244,.72));
+    }
+    .contact-box h2 { position: relative; z-index: 2; }
+    .contact-box p { position: relative; z-index: 2; color: #31394b; }
+    .contact-button {
+      display: inline-block;
+      position: relative;
+      z-index: 2;
+      padding: 12px 19px;
+      background: white;
+      border-radius: 8px;
+      font-weight: 750;
+      color: #5964d4;
+    }
+
+    footer {
+      padding: 45px 0;
+      color: white;
+      text-align: center;
+      background: linear-gradient(110deg, #ee88ae, #a993e8, #73c3e8);
+    }
+    footer .logo { margin-bottom: 12px; }
+    footer p { margin: 5px; opacity: .9; font-size: 13px; }
+
+    @media (max-width: 850px) {
+      .track { grid-template-columns: 58px 1fr; }
+      .cover { width: 58px; height: 58px; }
+      .track .desc, .track audio { grid-column: 1 / -1; }
+      .about-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 26px, 1100px); }
+      nav .wrap { align-items: flex-start; padding: 18px 0; }
+      nav div { text-align: right; }
+      nav a:not(.logo) { margin-left: 11px; font-size: 12px; }
+      h1 { letter-spacing: -4px; }
+      .hero p { font-size: 16px; }
+      section { padding: 60px 0; }
+      .contact-box { padding: 35px 25px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header id="home">
+  <div class="shape triangle" style="left:-80px; bottom:80px;"></div>
+  <div class="shape circle" style="right:-100px; top:210px;"></div>
+  <div class="shape diamond" style="right:130px; top:100px;"></div>
+  <div class="shape dots" style="left:30px; top:155px;"></div>
+
+  <nav>
+    <div class="wrap">
+      <a class="logo" href="#home">VIREON</a>
+      <div>
+        <a href="#music">Music</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap hero">
+    <div class="hero-content">
+      <p class="eyebrow">Music for games and interactive projects</p>
+      <h1>VIREON</h1>
+      <p>
+        I make original music for games, from chill background tracks
+        to bigger moments. Have a game that needs music? Have a listen.
+      </p>
+      <div class="buttons">
+        <a class="button primary" href="#music">Listen to my music</a>
+        <a class="button" href="#contact">Work with me</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="music">
+  <div class="wrap">
+    <div class="section-title">
+      <h2>Latest tracks</h2>
+      <p class="sub">A few tracks to give you an idea of what I make.</p>
+    </div>
+
+    <div id="track-list" class="tracks"></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-title">
+      <h2>A little about me</h2>
+      <p class="sub">Music production, games and making things sound good.</p>
+    </div>
+
+    <div class="about-grid">
+      <div class="info">
+        <div class="icon">♪</div>
+        <h3>About me</h3>
+        <p>
+          I’m VIREON, a music producer making original music for indie games
+          and other projects. I like making music that fits the world it is in.
+        </p>
+      </div>
+
+      <div class="info">
+        <div class="icon">✦</div>
+        <h3>What I can make</h3>
+        <ul>
+          <li>Ambient and background music</li>
+          <li>Electronic and synth based music</li>
+          <li>Hip hop and lo fi</li>
+          <li>Action and boss themes</li>
+          <li>Cinematic and atmospheric tracks</li>
+        </ul>
+      </div>
+
+      <div class="info">
+        <div class="icon">✉</div>
+        <h3>Easy to work with</h3>
+        <p>
+          If you have a reference, mood, scene or just a weird idea,
+          send it over. We can figure out the rest.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-box">
+      <h2>Got a game?</h2>
+      <p>
+        If you think my music could fit your project, send me a message.
+      </p>
+      <a class="contact-button" href="mailto:YOUR_EMAIL_HERE">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">VIREON</div>
+    <p>Music for games and interactive projects.</p>
+    <p>© 2026 VIREON</p>
+  </div>
+</footer>
+
+<script>
+  /*
+    ============================================================
+    ADD YOUR MUSIC HERE
+    ============================================================
+
+    You only need to edit this list.
+
+    "file" can be:
+      1. A direct MP3 URL
+         Example: https://example.com/my-song.mp3
+
+      2. A local file on the same website
+         Example: music/my-song.mp3
+
+    For a simple public portfolio, a direct MP3 URL is easiest.
+
+    Nobody visiting this website gets an upload button.
+    You control the tracks by editing this file.
+  */
+
+  const tracks = [
+    {
+      title: "Shatterline",
+      genre: "DnB / Happy Hardcore / Kawaiicore",
+      bpm: "175 BPM",
+      description: "A short description of the track and what kind of game it might fit.",
+      file: "C:\Users\tboet\OneDrive\Desktop\website\music",
+      cover: ""
+    },
+
+    {
+      title: "Another Track",
+      genre: "Lo fi",
+      bpm: "78 BPM",
+      description: "Something chill for menus, downtime, exploration or whatever fits.",
+      file: "https://YOUR-MUSIC-LINK-HERE/track2.mp3",
+      cover: ""
+    },
+
+    {
+      title: "Third Track",
+      genre: "Drum and Bass",
+      bpm: "174 BPM",
+      description: "A more energetic track for action, racing or fast gameplay.",
+      file: "https://YOUR-MUSIC-LINK-HERE/track3.mp3",
+      cover: ""
+    }
+  ];
+
+  const list = document.getElementById("track-list");
+
+  function makeCover(track) {
+    if (track.cover) {
+      return `<img class="cover" src="${track.cover}" alt="">`;
+    }
+
+    return `<div class="cover" aria-hidden="true"></div>`;
+  }
+
+  if (!tracks.length) {
+    list.innerHTML = '<div class="empty">No tracks added yet.</div>';
+  } else {
+    list.innerHTML = tracks.map(track => `
+      <article class="track">
+        ${makeCover(track)}
+
+        <div>
+          <h3>${track.title}</h3>
+          <div class="meta">${track.genre} · ${track.bpm}</div>
+        </div>
+
+        <div class="desc">${track.description}</div>
+
+        <audio controls preload="none" src="${track.file}">
+          Your browser does not support the audio player.
+        </audio>
+      </article>
+    `).join("");
+  }
+</script>
+
+</body>
+</html>
